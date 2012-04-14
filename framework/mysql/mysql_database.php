@@ -20,6 +20,8 @@ class MySQLDatabase extends Extendable {
 
     public $socket = false;
 
+    public $cachedTables = array();
+
     public function __construct($properties = array()) {
         parent::__construct($properties);
 
@@ -52,10 +54,16 @@ class MySQLDatabase extends Extendable {
      * @return MySQLTable
      */
     public function table($table) {
-        return new MySQLTable(array(
+        if(isset($this->cachedTables[$table])) {
+            return $this->cachedTables[$table];
+        }
+
+        $this->cachedTables[$table] = new MySQLTable(array(
             'table' => $table,
             'database' => $this
         ));
+
+        return $this->cachedTables[$table];
     }
 
     /**
