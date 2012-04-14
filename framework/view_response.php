@@ -5,7 +5,7 @@ Lib::Import(array('config', 'response'));
 class ViewResponse extends Response {
     public $view = '';
 
-    public $layout = '';
+    public $layout = 'default';
 
     public $variables = array();
 
@@ -68,5 +68,25 @@ class ViewResponse extends Response {
 
     public function element($element, $variables = array()) {
         return $this->contents("elements/{$element}", $variables);
+    }
+
+    public function js($file) {
+        Config::Import('application');
+
+        $version = strstr($file, '?')
+            ? '&v=' . Config::$Configs['application']['version']
+            : '?v=' . Config::$Configs['application']['version'];
+
+        return "<script type=\"text/javascript\" src=\"$file$version\"></script>\n";
+    }
+
+    public function css($file) {
+        Config::Import('application');
+
+        $version = strstr($file, '?')
+            ? '&v=' . Config::$Configs['application']['version']
+            : '?v=' . Config::$Configs['application']['version'];
+
+        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$file$version\" />\n";
     }
 }
