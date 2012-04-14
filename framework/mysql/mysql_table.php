@@ -1,6 +1,6 @@
 <?php
 
-Lib::Import('mysql/mysql_field_schema');
+Lib::Import(array('mysql/mysql_field_schema', 'mysql/mysql_record'));
 
 class MySQLTable extends Extendable {
     /**
@@ -125,5 +125,56 @@ class MySQLTable extends Extendable {
         $query .= ")";
 
         return $this->database->query($query) ? true : false;
+    }
+
+    public function findBy($column, $value) {
+        $query = "SELECT ";
+
+        $first = true;
+        foreach($this->schema as $schema) {
+            $query .= !$first ? ',' : '';
+
+            $query .= "`{$this->table}`.`{$schema->Field}`";
+
+            $first = false;
+        }
+
+        $query .= " FROM `{$this->table}` WHERE `{$this->table}`.`{$column}` = " . $this->database->encode($value);
+
+        $result = $this->database->query($query);
+
+        $records = array();
+
+        while($row = $result->fetch_assoc()) {
+            $records[] = new MySQLRecord($row);
+        }
+
+        return $records;
+    }
+
+    public function firstBy($column, $value) {
+        $query = "SELECT ";
+
+        $first = true;
+        foreach($this->schema as $schema) {
+            $query .= !$first ? ',' : '';
+
+            $query .= "`{$this->table}`.`{$schema->Field}`";
+
+            $first = false;
+        }
+
+        $query .= " FROM `{$this->table}` WHERE `{$this->table}`.`{$column}` = " . $this->database->encode($value) .
+            " LIMIT 1";
+
+        $result = $this->database->query($query);
+
+        $assoc = $result->fetch_assoc();
+
+        if(null === $assoc) {
+            return null;
+        }
+
+        return new MySQLRecord($assoc);
     }
 }
