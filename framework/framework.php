@@ -2,7 +2,8 @@
 
 include_once('libs.php');
 
-Lib::Import(array('request', 'config', 'router', 'response', 'resource', 'view_response', 'redirect_response'));
+Lib::Import(array('request', 'config', 'router', 'response', 'resource', 'view_response', 'redirect_response',
+    'strlib'));
 
 Config::Import('routes');
 
@@ -11,7 +12,8 @@ class Framework {
         $request = new Request(array(
             'verb' => $_SERVER['REQUEST_METHOD'],
             'uri' => $_SERVER['REQUEST_URI'],
-            'query_string' => $_SERVER['QUERY_STRING']
+            'query_string' => $_SERVER['QUERY_STRING'],
+            'data' => $_POST
         ));
 
         $router = new Router(array(
@@ -37,7 +39,14 @@ class Framework {
                 'request' => $request
             ));
 
-            $response = $resource->execute();
+            $pre_execute = $resource->pre_execute();
+
+            if(is_object($pre_execute)) {
+                $response = $pre_execute;
+            }
+            else {
+                $response = $resource->execute();
+            }
         }
 
         if(empty($response)) {

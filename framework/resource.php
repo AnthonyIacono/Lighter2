@@ -16,6 +16,13 @@ class Resource extends Extendable {
     }
 
     /**
+     * @var mixed
+     */
+    public function pre_execute() {
+        return true;
+    }
+
+    /**
      * @var Response
      */
     public function execute() {
