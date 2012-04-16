@@ -5,7 +5,7 @@ include_once('libs.php');
 Lib::Import(array('request', 'config', 'router', 'response', 'resource', 'view_response', 'redirect_response',
     'strlib'));
 
-Config::Import('routes');
+Config::Import(array('routes', 'autoload'));
 
 class Framework {
     public function run() {
