@@ -14,6 +14,8 @@ class Request extends Extendable {
 
     public $data = array();
 
+    public $files = array();
+
     public $get = true;
 
     public $post = false;
@@ -65,5 +67,9 @@ class Request extends Extendable {
 
     public function getData($key) {
         return isset($this->data[$key]) ? $this->data[$key] : null;
+    }
+
+    public function getFile($key) {
+        return isset($this->files[$key]) ? $this->files[$key] : null;
     }
 }

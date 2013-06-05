@@ -3,7 +3,7 @@
 include_once('libs.php');
 
 Lib::Import(array('request', 'config', 'router', 'response', 'resource', 'view_response', 'redirect_response',
-    'strlib'));
+    'strlib', 'phpsucks'));
 
 Config::Import(array('routes', 'autoload'));
 
@@ -13,11 +13,13 @@ class Framework {
             'verb' => $_SERVER['REQUEST_METHOD'],
             'uri' => $_SERVER['REQUEST_URI'],
             'query_string' => $_SERVER['QUERY_STRING'],
-            'data' => $_POST
+            'data' => $_POST,
+            'files' => $_FILES
         ));
 
         $router = new Router(array(
-            'routes' => Config::$Configs['routes']
+            'ignore_extensions' => empty(Config::$Configs['routes']['ignore_extensions']) ? false : Config::$Configs['routes']['ignore_extensions'],
+            'routes' => Config::$Configs['routes']['routes']
         ));
 
         $route = $router->route($request);

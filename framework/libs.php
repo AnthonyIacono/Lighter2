@@ -8,6 +8,17 @@ class Lib {
     }
 
     public static function Import($what) {
+        // If they pass multiple arguments
+        $args = func_get_args();
+
+        if(count($args) > 1) {
+            foreach($args as $arg) {
+                self::Import($arg);
+            }
+
+            return;
+        }
+
         if(is_array($what)) {
             foreach($what as $single) {
                 self::Import($single);

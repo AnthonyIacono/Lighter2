@@ -13,30 +13,6 @@ class ViewResponse extends Response {
         parent::__construct($properties);
 
         Config::Import('application');
-
-        $contents = $this->contents($this->view, $this->variables);
-
-        if(empty($this->layout)) {
-            $this->body = $contents;
-
-            return;
-        }
-
-        if(is_string($this->layout)) {
-            $this->body = $this->contents("layouts/{$this->layout}", array_merge($this->variables, array(
-                'content_for_layout' => $contents
-            )));
-
-            return;
-        }
-
-        foreach($this->layout as $layout) {
-            $contents = $this->contents("layouts/{$layout}", array_merge($this->variables, array(
-                'content_for_layout' => $contents
-            )));
-        }
-
-        $this->body = $contents;
     }
 
     protected function contents($view, $variables) {
@@ -50,6 +26,34 @@ class ViewResponse extends Response {
         }
 
         return $this->extract_and_include($variables, $file);
+    }
+
+    public function render() {
+        $contents = $this->contents($this->view, $this->variables);
+
+        if(empty($this->layout)) {
+            echo $contents;
+
+            return;
+        }
+
+        if(is_string($this->layout)) {
+            echo $this->contents("layouts/{$this->layout}", array_merge($this->variables, array(
+                'content_for_layout' => $contents,
+                'title' => isset($this->title) ? $this->title : '',
+            )));
+
+            return;
+        }
+
+        foreach($this->layout as $layout) {
+            $contents = $this->contents("layouts/{$layout}", array_merge($this->variables, array(
+                'content_for_layout' => $contents,
+                'title' => isset($this->title) ? $this->title : '',
+            )));
+        }
+
+        echo $contents;
     }
 
     protected function extract_and_include($__variables, $__file) {

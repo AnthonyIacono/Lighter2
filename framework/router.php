@@ -5,6 +5,8 @@ Lib::Import('route');
 class Router extends Extendable {
     public $routes = array();
 
+    public $ignore_extensions = false;
+
     public function __construct($properties = array()) {
         parent::__construct($properties);
     }
@@ -22,6 +24,10 @@ class Router extends Extendable {
             $pattern_pieces = $this->pieces($pattern);
 
             $uri = $request->getUri();
+
+            if($this->ignore_extensions) {
+                $uri = preg_replace('/\\.[a-z0-9A-Z]+$/', '', $uri);
+            }
 
             $uri_pieces = $this->pieces($uri);
 
